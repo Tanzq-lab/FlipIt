@@ -35,6 +35,7 @@
             this.displayNothingRadioButton = new System.Windows.Forms.RadioButton();
             this.displayCurrentTimeRadioButton = new System.Windows.Forms.RadioButton();
             this.displayWorldTimesRadioButton = new System.Windows.Forms.RadioButton();
+            this.displayCountDownRadioButton = new System.Windows.Forms.RadioButton();
             this.worldTimesListView = new System.Windows.Forms.ListView();
             this.cityColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.largeImageList = new System.Windows.Forms.ImageList(this.components);
@@ -124,6 +125,19 @@
             this.displayWorldTimesRadioButton.Text = "World Times";
             this.displayWorldTimesRadioButton.UseVisualStyleBackColor = true;
             this.displayWorldTimesRadioButton.CheckedChanged += new System.EventHandler(this.displayWorldTimesRadioButton_CheckedChanged);
+            // 
+            // displayCoundownRadioButton
+            // 
+            this.displayCountDownRadioButton.AutoSize = true;
+            this.displayCountDownRadioButton.Location = new System.Drawing.Point(120, 332);
+            this.displayCountDownRadioButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.displayCountDownRadioButton.Name = "displayWorldTimesRadioButton";
+            this.displayCountDownRadioButton.Size = new System.Drawing.Size(99, 21);
+            this.displayCountDownRadioButton.TabIndex = 9;
+            this.displayCountDownRadioButton.TabStop = true;
+            this.displayCountDownRadioButton.Text = "Count Down";
+            this.displayCountDownRadioButton.UseVisualStyleBackColor = true;
+            this.displayCountDownRadioButton.CheckedChanged += new System.EventHandler(this.displayCountDownRadioButton_CheckedChanged);
             // 
             // worldTimesListView
             // 
@@ -380,6 +394,7 @@
             this.Controls.Add(this.worldTimesListView);
             this.Controls.Add(this.displayWorldTimesRadioButton);
             this.Controls.Add(this.displayCurrentTimeRadioButton);
+            this.Controls.Add(this.displayCountDownRadioButton);
             this.Controls.Add(this.displayNothingRadioButton);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
@@ -404,6 +419,7 @@
         private System.Windows.Forms.RadioButton displayNothingRadioButton;
         private System.Windows.Forms.RadioButton displayCurrentTimeRadioButton;
         private System.Windows.Forms.RadioButton displayWorldTimesRadioButton;
+        private System.Windows.Forms.RadioButton displayCountDownRadioButton;
         private System.Windows.Forms.ListView worldTimesListView;
         private System.Windows.Forms.ColumnHeader cityColumnHeader;
         private System.Windows.Forms.ImageList largeImageList;

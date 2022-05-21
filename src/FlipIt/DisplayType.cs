@@ -4,6 +4,7 @@
     {
         None = 0,
         CurrentTime = 1,
-        WorldTime = 6
+        WorldTime = 6,
+        CountDown = 12
     }
 }

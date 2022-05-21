@@ -99,6 +99,9 @@ namespace ScreenSaver
                 case DisplayType.WorldTime:
                     displayWorldTimesRadioButton.Checked = true;
                     break;
+                case DisplayType.CountDown:
+                    displayCountDownRadioButton.Checked = true;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -129,6 +132,11 @@ namespace ScreenSaver
         private void displayWorldTimesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             SetScreenDisplayType(DisplayType.WorldTime);
+            CheckWorldTimesControls();
+        }
+        private void displayCountDownRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            SetScreenDisplayType(DisplayType.CountDown);
             CheckWorldTimesControls();
         }
 

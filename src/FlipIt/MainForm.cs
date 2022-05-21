@@ -135,6 +135,10 @@ namespace ScreenSaver
                             ? new WorldTimesScreen(_screenSetting.Locations, this, _settings.Display24HrTime, _settings.ShowDstIndicator) 
                             : new WorldTimesScreen(GetDefaultLocations(), this, _settings.Display24HrTime, _settings.ShowDstIndicator);
                     }
+                    if (_screenSetting.DisplayType == DisplayType.CountDown)
+                    {
+	                    _timeScreen = new CountDownScreen(this, _settings.Display24HrTime, _isPreviewMode, _settings.Scale);
+                    }
                     else
                     {
                         throw new NotImplementedException("Unhandled state: " + _screenSetting.DisplayType);

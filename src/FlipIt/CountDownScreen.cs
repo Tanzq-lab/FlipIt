@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace ScreenSaver
 {
-    internal class CurrentTimeScreen : TimeScreen
+    internal class CountDownScreen : TimeScreen
     {
         private readonly bool _display24HourTime;
         private readonly bool _isPreviewMode;
@@ -16,9 +16,19 @@ namespace ScreenSaver
 
         private Font _largeFont;
         private Font _smallFont;
+        private Font _ChineseFont;
 
-        private Font LargeFont => _largeFont ?? (_largeFont = new Font(FontFamily, _boxSize.Percent(85), FontStyle.Bold, GraphicsUnit.Pixel));
-        private Font SmallFont => _smallFont ?? (_smallFont = new Font(FontFamily, _boxSize.Percent(9), FontStyle.Bold, GraphicsUnit.Pixel));
+        private Font LargeFont => _largeFont ??
+                                  (_largeFont = new Font(FontFamily, _boxSize.Percent(85), FontStyle.Bold,
+                                      GraphicsUnit.Pixel));
+
+        private Font ChineseFont => _ChineseFont ??
+                                    (_ChineseFont = new Font(FontFamily, _boxSize.Percent(50), FontStyle.Bold,
+                                        GraphicsUnit.Pixel));
+
+        private Font SmallFont => _smallFont ??
+                                  (_smallFont = new Font(FontFamily, _boxSize.Percent(9), FontStyle.Bold,
+                                      GraphicsUnit.Pixel));
 
         private readonly Brush _fontBrush = new SolidBrush(Color.FromArgb(255, 183, 183, 183));
         private readonly Pen _splitPen = new Pen(Color.Black, SplitWidth);
@@ -31,24 +41,24 @@ namespace ScreenSaver
         private const bool DrawGuideLines = false;
 
 
-        public CurrentTimeScreen(Form form, bool display24HourTime, bool isPreviewMode, int scalePercent)
+        public CountDownScreen(Form form, bool display24HourTime, bool isPreviewMode, int scalePercent)
         {
             _display24HourTime = display24HourTime;
             _isPreviewMode = isPreviewMode;
             _form = form;
-            
+
             // The border is between 5% and 30% of the screen
             //  * A scale of 0 = 5% 
             //  * A scale of 100 = 30%
             var borderPercent = (100 - scalePercent) / 4 + 5;
-            
+
             var boxSizeWidth = CalcBoxSize(form.Width, borderPercent, 2);
             var boxSizeHeight = CalcBoxSize(form.Height, borderPercent, 1);
-            
+
             _boxSize = Math.Min(boxSizeWidth, boxSizeHeight);
             _separatorWidth = Convert.ToInt32(_boxSize * BoxSeparationPercent);
 
-            _startingX = CalcOffset(form.Width, 2, _boxSize, _separatorWidth);
+            _startingX = CalcOffset((int) (form.Width * 1.25), 2, _boxSize, _separatorWidth);
             _startingY = CalcOffset(form.Height, 1, _boxSize, 0);
         }
 
@@ -60,39 +70,22 @@ namespace ScreenSaver
             return Convert.ToInt32(remainingSpace / parts);
         }
 
-        private int CalcOffset(int total, int boxCount, int boxSize, int seperatorSize )
+        private int CalcOffset(int total, int boxCount, int boxSize, int seperatorSize)
         {
             var sizeOfAllBoxes = (boxSize + seperatorSize) * boxCount - seperatorSize;
             return (total - sizeOfAllBoxes) / 2;
         }
-        
+
         protected override byte[] GetFontResource()
         {
             return Properties.Resources.HelveticaLTStd_BoldCond;
         }
-        
+
         internal override void Draw()
         {
             var boxRect = new Rectangle(_startingX, _startingY, _boxSize, _boxSize);
 
-            if (!_display24HourTime)
-            {
-                var pm = SystemTime.Now.Hour >= 12;
-                DrawIt(boxRect, SystemTime.Now.ToString("%h"), pm ? null : "AM", pm ? "PM" : null); // The % avoids a FormatException https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx#UsingSingleSpecifiers
-            }
-            else
-            {
-                DrawIt(boxRect, SystemTime.Now.ToString("HH"));
-            }
-
-            boxRect.X += _boxSize + _separatorWidth;
-            DrawIt(boxRect, SystemTime.Now.ToString("mm"));
-
-            if (_showSeconds)
-            {
-                boxRect.X += _boxSize + _separatorWidth;
-                DrawIt(boxRect, SystemTime.Now.ToString("ss"));
-            }
+            DrawIt(boxRect, SystemTime.End.Subtract(SystemTime.Now).Days.ToString(), "距8-10", "仅剩");
         }
 
         private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null)
@@ -100,57 +93,62 @@ namespace ScreenSaver
             DrawBox(rect);
             DrawTextInRect(rect, s, topString, bottomString);
         }
-        
+
         private void DrawBox(Rectangle rect)
         {
             var radius = rect.Width / 20;
             using (var path = RoundedRectangle.Create(rect, radius))
             using (var brush = new LinearGradientBrush(rect,
-                BackColorTop,
-                BackColorBottom, LinearGradientMode.Vertical))
+                       BackColorTop,
+                       BackColorBottom, LinearGradientMode.Vertical))
             {
                 Gfx.FillPath(brush, path);
             }
         }
-        
+
+
         private void DrawTextInRect(Rectangle rect, string s, string topString = null, string bottomString = null)
         {
             var diff = rect.Width / 10;
-            
+
             // Some hacky adjustments to center the text in the box
             var xOffset = rect.Width.Percent(1);
             var yOffset = rect.Height.Percent(4);
-            
-            var textRect = new Rectangle(rect.Left - diff + xOffset, rect.Y + yOffset, rect.Width + diff * 2, rect.Height);
 
-            if (DrawGuideLines)
-            {
-                Gfx.DrawRectangle(Pens.Red, textRect);
-            }
-            
+            var textRect = new Rectangle(rect.Left - diff + xOffset, rect.Y + yOffset, rect.Width + diff * 2,
+                rect.Height);
+
             // Draw the text
             var stringFormat = new StringFormat
             {
-                Alignment = StringAlignment.Center, 
+                Alignment = StringAlignment.Center,
                 LineAlignment = StringAlignment.Center,
                 //FormatFlags = StringFormatFlags.NoWrap
             };
 
-            Gfx.DrawString(s, LargeFont, _fontBrush, textRect, stringFormat);
+            Gfx.DrawString(s, ChineseFont, _fontBrush, textRect, stringFormat);
 
             if (topString != null)
             {
                 var leftOffset = diff / 2;
                 Gfx.DrawString(topString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Y + diff);
             }
+
             if (bottomString != null)
             {
                 var leftOffset = diff / 2;
-                Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Bottom - diff - SmallFont.Height);
+                Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset,
+                    rect.Bottom - diff - SmallFont.Height);
+            }
+
+            {
+                var leftOffset = diff * 2;
+                Gfx.DrawString("天", SmallFont, _fontBrush, rect.X + rect.Width - leftOffset,
+                    rect.Bottom - diff - SmallFont.Height);
             }
 
             Gfx.DrawString("Tanzq", SmallFont, _fontBrush, (int) (_form.Width * 0.9), (int) (_form.Height * 0.9));
-            
+
             // Horizontal dividing line
             if (!_isPreviewMode)
             {
@@ -163,5 +161,55 @@ namespace ScreenSaver
                 Gfx.DrawLine(Pens.Black, rect.Left, y, rect.Right, y);
             }
         }
+
+        //
+        // private void DrawTextInRect(Rectangle rect, string s, string topString = null, string bottomString = null)
+        // {
+        //     var diff = rect.Width / 10;
+        //     
+        //     // Some hacky adjustments to center the text in the box
+        //     var xOffset = rect.Width.Percent(1);
+        //     var yOffset = rect.Height.Percent(4);
+        //     
+        //     var textRect = new Rectangle(rect.Left - diff + xOffset, rect.Y + yOffset, rect.Width + diff * 2, rect.Height);
+        //
+        //     if (DrawGuideLines)
+        //     {
+        //         Gfx.DrawRectangle(Pens.Red, textRect);
+        //     }
+        //     
+        //     // Draw the text
+        //     var stringFormat = new StringFormat
+        //     {
+        //         Alignment = StringAlignment.Center, 
+        //         LineAlignment = StringAlignment.Center,
+        //         //FormatFlags = StringFormatFlags.NoWrap
+        //     };
+        //
+        //     Gfx.DrawString(s, LargeFont, _fontBrush, textRect, stringFormat);
+        //
+        //     if (topString != null)
+        //     {
+        //         var leftOffset = diff / 2;
+        //         Gfx.DrawString(topString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Y + diff);
+        //     }
+        //     if (bottomString != null)
+        //     {
+        //         var leftOffset = diff / 2;
+        //         Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Bottom - diff - SmallFont.Height);
+        //     }
+        //
+        //     // Horizontal dividing line
+        //     if (!_isPreviewMode)
+        //     {
+        //         var y = rect.Y + (rect.Height / 2) - (SplitWidth / 2);
+        //         Gfx.DrawLine(_splitPen, rect.Left, y, rect.Right, y);
+        //     }
+        //     else
+        //     {
+        //         var y = rect.Y + (rect.Height / 2);
+        //         Gfx.DrawLine(Pens.Black, rect.Left, y, rect.Right, y);
+        //     }
+        // }
     }
 }
