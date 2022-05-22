@@ -58,7 +58,7 @@ namespace ScreenSaver
             _boxSize = Math.Min(boxSizeWidth, boxSizeHeight);
             _separatorWidth = Convert.ToInt32(_boxSize * BoxSeparationPercent);
 
-            _startingX = CalcOffset((int) (form.Width * 1.25), 2, _boxSize, _separatorWidth);
+            _startingX = CalcOffset((int) (form.Width), 1, _boxSize, _separatorWidth);
             _startingY = CalcOffset(form.Height, 1, _boxSize, 0);
         }
 
