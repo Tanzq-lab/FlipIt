@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ScreenSaver
@@ -84,8 +85,22 @@ namespace ScreenSaver
         internal override void Draw()
         {
             var boxRect = new Rectangle(_startingX, _startingY, _boxSize, _boxSize);
-
-            DrawIt(boxRect, SystemTime.End.Subtract(SystemTime.Now).Days.ToString(), "距8-10", "仅剩");
+            // Console.WriteLine(GetMonthLastDay().ToString());
+            
+            // StreamWriter sw = new StreamWriter("test.log"); 
+            // Console.Write(GetMonthLastDay().ToString("yyyy/MM/dd"));
+            // Console.ReadKey();
+            // sw.Flush(); 
+            // sw.Close();
+            
+            DrawIt(boxRect, GetMonthLastDay().Subtract(SystemTime.Now).Days.ToString(), "距下月", "剩余");
+        }
+        
+        private DateTime GetMonthLastDay()
+        {
+            DateTime now = DateTime.Now;
+            DateTime d1 = new DateTime(now.Year, now.Month, 1);
+            return d1.AddMonths(1);
         }
 
         private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null)
