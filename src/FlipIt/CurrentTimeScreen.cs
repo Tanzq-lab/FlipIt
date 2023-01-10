@@ -74,25 +74,10 @@ namespace ScreenSaver
         internal override void Draw()
         {
             var boxRect = new Rectangle(_startingX, _startingY, _boxSize, _boxSize);
-
-            if (!_display24HourTime)
-            {
-                var pm = SystemTime.Now.Hour >= 12;
-                DrawIt(boxRect, SystemTime.Now.ToString("%h"), pm ? null : "AM", pm ? "PM" : null); // The % avoids a FormatException https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx#UsingSingleSpecifiers
-            }
-            else
-            {
-                DrawIt(boxRect, SystemTime.Now.ToString("HH"));
-            }
+            DrawIt(boxRect, "新");
 
             boxRect.X += _boxSize + _separatorWidth;
-            DrawIt(boxRect, SystemTime.Now.ToString("mm"));
-
-            if (_showSeconds)
-            {
-                boxRect.X += _boxSize + _separatorWidth;
-                DrawIt(boxRect, SystemTime.Now.ToString("ss"));
-            }
+            DrawIt(boxRect, "年");
         }
 
         private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null)

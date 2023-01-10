@@ -47,19 +47,19 @@ namespace ScreenSaver
             _display24HourTime = display24HourTime;
             _isPreviewMode = isPreviewMode;
             _form = form;
-
+            
             // The border is between 5% and 30% of the screen
             //  * A scale of 0 = 5% 
             //  * A scale of 100 = 30%
             var borderPercent = (100 - scalePercent) / 4 + 5;
-
+            
             var boxSizeWidth = CalcBoxSize(form.Width, borderPercent, 2);
             var boxSizeHeight = CalcBoxSize(form.Height, borderPercent, 1);
-
+            
             _boxSize = Math.Min(boxSizeWidth, boxSizeHeight);
             _separatorWidth = Convert.ToInt32(_boxSize * BoxSeparationPercent);
 
-            _startingX = CalcOffset((int) (form.Width), 1, _boxSize, _separatorWidth);
+            _startingX = CalcOffset(form.Width, 2, _boxSize, _separatorWidth);
             _startingY = CalcOffset(form.Height, 1, _boxSize, 0);
         }
 
@@ -85,15 +85,10 @@ namespace ScreenSaver
         internal override void Draw()
         {
             var boxRect = new Rectangle(_startingX, _startingY, _boxSize, _boxSize);
-            // Console.WriteLine(GetMonthLastDay().ToString());
-            
-            // StreamWriter sw = new StreamWriter("test.log"); 
-            // Console.Write(GetMonthLastDay().ToString("yyyy/MM/dd"));
-            // Console.ReadKey();
-            // sw.Flush(); 
-            // sw.Close();
-            
-            DrawIt(boxRect, GetMonthLastDay().Subtract(SystemTime.Now).Days.ToString(), "距发工资", "剩余");
+            DrawIt(boxRect, "快");
+
+            boxRect.X += _boxSize + _separatorWidth;
+            DrawIt(boxRect, "乐");
         }
         
         private DateTime GetMonthLastDay()
@@ -126,45 +121,41 @@ namespace ScreenSaver
         private void DrawTextInRect(Rectangle rect, string s, string topString = null, string bottomString = null)
         {
             var diff = rect.Width / 10;
-
+            
             // Some hacky adjustments to center the text in the box
             var xOffset = rect.Width.Percent(1);
             var yOffset = rect.Height.Percent(4);
+            
+            var textRect = new Rectangle(rect.Left - diff + xOffset, rect.Y + yOffset, rect.Width + diff * 2, rect.Height);
 
-            var textRect = new Rectangle(rect.Left - diff + xOffset, rect.Y + yOffset, rect.Width + diff * 2,
-                rect.Height);
-
+            if (DrawGuideLines)
+            {
+                Gfx.DrawRectangle(Pens.Red, textRect);
+            }
+            
             // Draw the text
             var stringFormat = new StringFormat
             {
-                Alignment = StringAlignment.Center,
+                Alignment = StringAlignment.Center, 
                 LineAlignment = StringAlignment.Center,
                 //FormatFlags = StringFormatFlags.NoWrap
             };
 
-            Gfx.DrawString(s, ChineseFont, _fontBrush, textRect, stringFormat);
+            Gfx.DrawString(s, LargeFont, _fontBrush, textRect, stringFormat);
 
             if (topString != null)
             {
                 var leftOffset = diff / 2;
                 Gfx.DrawString(topString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Y + diff);
             }
-
             if (bottomString != null)
             {
                 var leftOffset = diff / 2;
-                Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset,
-                    rect.Bottom - diff - SmallFont.Height);
-            }
-
-            {
-                var leftOffset = diff * 2;
-                Gfx.DrawString("天", SmallFont, _fontBrush, rect.X + rect.Width - leftOffset,
-                    rect.Bottom - diff - SmallFont.Height);
+                Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Bottom - diff - SmallFont.Height);
             }
 
             Gfx.DrawString("Tanzq", SmallFont, _fontBrush, (int) (_form.Width * 0.9), (int) (_form.Height * 0.9));
-
+            
             // Horizontal dividing line
             if (!_isPreviewMode)
             {
