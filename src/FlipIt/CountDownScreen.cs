@@ -93,14 +93,15 @@ namespace ScreenSaver
             // sw.Flush(); 
             // sw.Close();
             
-            DrawIt(boxRect, GetMonthLastDay().Subtract(SystemTime.Now).Days.ToString(), "距下月", "剩余");
+            DrawIt(boxRect, GetMonthLastDay().Subtract(SystemTime.Now).Days.ToString(), "距发工资", "剩余");
         }
         
         private DateTime GetMonthLastDay()
         {
             DateTime now = DateTime.Now;
-            DateTime d1 = new DateTime(now.Year, now.Month, 1);
-            return d1.AddMonths(1);
+            DateTime d1 = new DateTime(now.Year, now.Month, 10);
+            if (now.Day > 10) return d1.AddMonths(1);
+            return d1;
         }
 
         private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null)
