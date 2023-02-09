@@ -99,7 +99,7 @@ namespace ScreenSaver
         private DateTime GetMonthLastDay()
         {
             DateTime now = DateTime.Now;
-            DateTime d1 = new DateTime(now.Year, now.Month, 10);
+            DateTime d1 = new DateTime(now.Year, now.Month, 11);
             if (now.Day > 10) return d1.AddMonths(1);
             return d1;
         }
