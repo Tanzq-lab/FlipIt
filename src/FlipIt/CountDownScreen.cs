@@ -85,10 +85,10 @@ namespace ScreenSaver
         internal override void Draw()
         {
             var boxRect = new Rectangle(_startingX, _startingY, _boxSize, _boxSize);
-            DrawIt(boxRect, "快");
+            DrawIt(boxRect, "Meta");
 
             boxRect.X += _boxSize + _separatorWidth;
-            DrawIt(boxRect, "乐");
+            DrawIt(boxRect, "App");
         }
         
         private DateTime GetMonthLastDay()
@@ -141,7 +141,8 @@ namespace ScreenSaver
                 //FormatFlags = StringFormatFlags.NoWrap
             };
 
-            Gfx.DrawString(s, LargeFont, _fontBrush, textRect, stringFormat);
+            Gfx.DrawString(s, new Font(FontFamily, _boxSize.Percent(45), FontStyle.Bold,
+                GraphicsUnit.Pixel), _fontBrush, textRect, stringFormat);
 
             if (topString != null)
             {
