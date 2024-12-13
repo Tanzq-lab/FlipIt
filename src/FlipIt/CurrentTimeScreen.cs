@@ -86,7 +86,7 @@ namespace ScreenSaver
             }
 
             boxRect.X += _boxSize + _separatorWidth;
-            DrawIt(boxRect, SystemTime.Now.ToString("mm"));
+            DrawIt(boxRect, SystemTime.Now.ToString("mm"), null, null, DateTime.Now.DayOfWeek.ToString());
 
             if (_showSeconds)
             {
@@ -95,10 +95,10 @@ namespace ScreenSaver
             }
         }
 
-        private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null)
+        private void DrawIt(Rectangle rect, string s, string topString = null, string bottomString = null, string bottomRightString = null )
         {
             DrawBox(rect);
-            DrawTextInRect(rect, s, topString, bottomString);
+            DrawTextInRect(rect, s, topString, bottomString, bottomRightString);
         }
         
         private void DrawBox(Rectangle rect)
@@ -113,7 +113,7 @@ namespace ScreenSaver
             }
         }
         
-        private void DrawTextInRect(Rectangle rect, string s, string topString = null, string bottomString = null)
+        private void DrawTextInRect(Rectangle rect, string s, string topString = null, string bottomString = null, string bottomRightString = null )
         {
             var diff = rect.Width / 10;
             
@@ -148,6 +148,13 @@ namespace ScreenSaver
                 var leftOffset = diff / 2;
                 Gfx.DrawString(bottomString, SmallFont, _fontBrush, rect.X + leftOffset, rect.Bottom - diff - SmallFont.Height);
             }
+            
+            {
+                var leftOffset = diff * 3;
+                Gfx.DrawString(bottomRightString, SmallFont, _fontBrush, rect.X + rect.Width - leftOffset,
+                    rect.Bottom - SmallFont.Height);
+            }
+            
 
             Gfx.DrawString("Tanzq", SmallFont, _fontBrush, (int) (_form.Width * 0.9), (int) (_form.Height * 0.9));
             
